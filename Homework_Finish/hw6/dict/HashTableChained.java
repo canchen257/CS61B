@@ -1,6 +1,7 @@
 /* HashTableChained.java */
 
 package dict;
+import list.*; // Apply the singly-linked list to finish this homework.
 
 /**
  *  HashTableChained implements a Dictionary as a hash table with chaining.
@@ -15,12 +16,9 @@ package dict;
  **/
 
 public class HashTableChained implements Dictionary {
-
-  /**
-   *  Place any data fields here.
-   **/
-
-
+  private int size;                        // the number of Entries in hash table.
+  private int prime;                       // the number of buckets in hash table.
+  private SList[] slist;
 
   /** 
    *  Construct a new empty hash table intended to hold roughly sizeEstimate
@@ -28,8 +26,21 @@ public class HashTableChained implements Dictionary {
    *  you use a prime number, and shoot for a load factor between 0.5 and 1.)
    **/
 
+
+  public static boolean isPrime(int N){
+    if(N<2) return false; 
+        for(int i=2; i*i <= N; ++i)  
+            if(N%i == 0) return false; 
+        return true;  
+  }
+
   public HashTableChained(int sizeEstimate) {
-    // Your solution here.
+    size = 0;
+    prime = sizeEstimate;  // the number of buckets is a prime.
+    while(!isPrime(prime) && prime <= 2*sizeEstimate){
+      prime++;
+    }
+    slist = new SList[prime];
   }
 
   /** 
@@ -38,7 +49,9 @@ public class HashTableChained implements Dictionary {
    **/
 
   public HashTableChained() {
-    // Your solution here.
+    size = 0;
+    prime = 97;
+    slist = new SList[prime];
   }
 
   /**
@@ -50,8 +63,7 @@ public class HashTableChained implements Dictionary {
    **/
 
   int compFunction(int code) {
-    // Replace the following line with your solution.
-    return 88;
+    return (Math.abs(code) % prime);    // The simplest compression function: h(i) = |i| mod N.
   }
 
   /** 
@@ -62,8 +74,7 @@ public class HashTableChained implements Dictionary {
    **/
 
   public int size() {
-    // Replace the following line with your solution.
-    return 0;
+    return size;
   }
 
   /** 
@@ -73,8 +84,7 @@ public class HashTableChained implements Dictionary {
    **/
 
   public boolean isEmpty() {
-    // Replace the following line with your solution.
-    return true;
+    return (size() == 0);
   }
 
   /**
@@ -91,8 +101,16 @@ public class HashTableChained implements Dictionary {
    **/
 
   public Entry insert(Object key, Object value) {
-    // Replace the following line with your solution.
-    return null;
+    Entry newEntry = new Entry();
+    newEntry.key = key;
+    newEntry.value = value;
+    int index = compFunction(key.hashCode());
+    if(slist[index] == null){
+      slist[index] = new SList();
+    }
+    slist[index].insertBack(newEntry);
+    size++;
+    return newEntry;
   }
 
   /** 
@@ -108,9 +126,23 @@ public class HashTableChained implements Dictionary {
    **/
 
   public Entry find(Object key) {
-    // Replace the following line with your solution.
-    return null;
+    if(slist[compFunction(key.hashCode())].isEmpty()) {return null;}
+    else{
+      try{
+      SListNode current = (SListNode) slist[compFunction(key.hashCode())].front();
+      while(current != null){
+        if(((Entry) (current.item())).key().equals(key)){
+          return (Entry) current.item();
+        }else{
+          current = (SListNode) current.next();
+        }
+      }
+      }catch(InvalidNodeException e){
+        System.out.println(e);
+     }
+      return null;   
   }
+ }
 
   /** 
    *  Remove an entry with the specified key.  If such an entry is found,
@@ -126,15 +158,51 @@ public class HashTableChained implements Dictionary {
    */
 
   public Entry remove(Object key) {
-    // Replace the following line with your solution.
-    return null;
-  }
+    if(slist[compFunction(key.hashCode())].isEmpty()) {
+      return null;
+    }else{
+      try{
+      SListNode current =(SListNode) slist[compFunction(key.hashCode())].front();
+      while(current != null){
+        if(((Entry) (current.item())).key().equals(key)){
+          current.remove();
+          size--;
+          return (Entry) current.item();
+        }else{
+          current = (SListNode) current.next();
+        }
+      }
+    }catch(InvalidNodeException e){
+      System.out.println(e);
+    }
+      return null;
+    }
+    }
+
 
   /**
    *  Remove all entries from the dictionary.
    */
   public void makeEmpty() {
-    // Your solution here.
+    size = 0;
+    slist = new SList[prime];  
   }
-
+  
+  public void numCollisions(){
+    int num = 0;
+    double expectedCollisions = 0;
+    expectedCollisions = size - prime + prime * Math.pow((1-1/(double) prime), (double)size);
+    for(int i = 0; i < slist.length; i++){
+      if(slist[i] == null){
+        System.out.print("[ " + 0 + " ]");
+      }else{
+        System.out.print("[ " +slist[i].length() + " ]");
+        if(slist[i].length() > 1){
+          num++;
+        }
+      }
+    }
+    System.out.println('\n'+"The actual collision size is: " + num);
+    System.out.println("The expected collision size is: " + expectedCollisions);
+  }
 }
