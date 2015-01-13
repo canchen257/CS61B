@@ -77,8 +77,15 @@ class SibTreeNode extends TreeNode {
    *  this node is the root.
    */
   public TreeNode parent() throws InvalidNodeException {
-    // REPLACE THE FOLLOWING LINE WITH YOUR SOLUTION TO PART I.
-    return null;
+    if(isValidNode()){
+      if(this == myTree.root()){
+        return new SibTreeNode();
+      }
+        return this.parent;
+
+    }else{
+      throw new InvalidNodeException();
+    }
   }
 
   /**
@@ -132,7 +139,43 @@ class SibTreeNode extends TreeNode {
    *  Throws an InvalidNodeException if "this" node is invalid.
    */
   public void insertChild(Object item, int c) throws InvalidNodeException {
-    // FILL IN YOUR SOLUTION TO PART II HERE.
+    if(isValidNode()){
+      if(c <= 1){
+        if(firstChild == null){
+          firstChild = new SibTreeNode(myTree, item);
+          firstChild.parent = this;
+        }else{
+          SibTreeNode newkid = new SibTreeNode(myTree,item);
+          newkid.nextSibling = firstChild;
+          newkid.parent = this;
+          this.firstChild = newkid;
+        }
+      }
+      if(c > 1 && c <= children()){
+        SibTreeNode kids = firstChild;
+        int count = 1;
+        while(count < c-1){
+          kids = kids.nextSibling;
+          count++;
+        }
+        SibTreeNode newkid = new SibTreeNode(myTree,item);
+        newkid.nextSibling = kids.nextSibling;
+        newkid.parent = this;
+        kids.nextSibling = newkid;
+      }
+      if(c > children()){
+        SibTreeNode kids = firstChild;
+        while(kids.nextSibling != null){
+          kids = kids.nextSibling;
+        }
+        SibTreeNode newkid = new SibTreeNode(myTree, item);
+        kids.nextSibling = newkid;
+        newkid.parent = this;
+      }
+      myTree.size++;
+    }else{
+      throw new InvalidNodeException();
+    }
   }
 
   /**
@@ -142,7 +185,31 @@ class SibTreeNode extends TreeNode {
    *  its right, those siblings are all shifted left by one.
    */
   public void removeLeaf() throws InvalidNodeException {
-    // FILL IN YOUR SOLUTION TO PART III HERE.
+    if(isValidNode()){
+      if(this == myTree.root()){
+       myTree.size--;
+       this.valid = false;
+       return;
+      }
+      if(children() == 0){
+        if(this == ((SibTreeNode)parent()).firstChild){
+          ((SibTreeNode)parent()).firstChild = this.nextSibling;
+          myTree.size--;
+          this.valid = false;
+          return;
+        }
+        SibTreeNode kids = ((SibTreeNode)parent()).firstChild;
+        while(!kids.nextSibling.equals(this)){
+          kids = kids.nextSibling;
+        }
+        kids.nextSibling = this.nextSibling;
+        this.valid = false;
+        myTree.size--;
+      }
+    }
+    else{
+      throw new InvalidNodeException();
+    }
   }
 
 }
