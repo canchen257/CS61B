@@ -100,9 +100,296 @@ public class Tree234 extends IntDictionary {
    *
    *  @param key is the key sought.
    **/
-  public void insert(int key) {
-    // Fill in your solution here.
+public void insert(int key){
+  if(isEmpty()){
+    root = new Tree234Node(null, key);
+    size++;
+    return;
   }
+  if(!find(key)){
+    Tree234Node node = root;
+  if(node.child1 == null){
+    if(node.keys == 1){
+      if(key < node.key1){
+        node.key2 = node.key1;
+        node.key1 = key;
+      }else{
+        node.key2 = key;
+      }
+        node.keys = 2;
+        return;
+    }else if(node.keys == 2){
+      if(key < node.key1){
+        node.key3 = node.key2;
+        node.key2 = node.key1;
+        node.key1 = key;
+      }else if(key > node.key1 && key < node.key2){
+        node.key3 = node.key2;
+        node.key2 = key;
+      }else{
+        node.key3 = key;
+      } 
+            node.keys = 3;
+          return; 
+    }else if(node.keys == 3){
+          Tree234Node newNode1 = new Tree234Node(null, node.key1);
+          Tree234Node newNode2 = new Tree234Node(null, node.key3);
+          newNode1.child1 = node.child1;
+          newNode1.child2 = node.child2;
+          newNode2.child1 = node.child3;
+          newNode2.child2 = node.child4;
+          root = new Tree234Node(null, node.key2);
+          root.child1 = newNode1;
+          root.child2 = newNode2;
+          newNode1.parent = root;
+          newNode2.parent = root;
+          size = size + 2;
+          node = root; 
+
+    }
+  }
+  while(node.child1 != null){
+      if(node.keys == 3){
+        if(node == root){
+          Tree234Node newNode1 = new Tree234Node(null, node.key1);
+          Tree234Node newNode2 = new Tree234Node(null, node.key3);
+          newNode1.child1 = node.child1;
+          newNode1.child2 = node.child2;
+          newNode2.child1 = node.child3;
+          newNode2.child2 = node.child4;
+          node.child1.parent = newNode1;
+          node.child2.parent = newNode1;
+          node.child3.parent = newNode2;
+          node.child4.parent = newNode2;
+          root = new Tree234Node(null, node.key2);
+          root.child1 = newNode1;
+          root.child2 = newNode2;
+          newNode1.parent = root;
+          newNode2.parent = root;
+          size = size + 2;
+          node = root;
+        }
+      else if(node.parent.keys == 1 && node == node.parent.child1){
+        size++;
+        node.parent.keys = 2;
+        node.parent.key2 = node.parent.key1;
+        node.parent.key1 = node.key2;
+        node.parent.child3 = node.parent.child2;
+        node.parent.child1 = new Tree234Node(node.parent,node.key1);
+        node.parent.child1.child1 = node.child1;
+        node.parent.child1.child2 = node.child2;
+        node.child1.parent = node.parent.child1;
+        node.child2.parent = node.parent.child1;
+        node.parent.child2 = new Tree234Node(node.parent, node.key3);
+        node.parent.child2.child1 = node.child3;
+        node.parent.child2.child2 = node.child4;
+        node.child3.parent = node.parent.child2;
+        node.child4.parent = node.parent.child2;
+        if(key < node.parent.key1){node = node.parent.child1;}
+        else if(key > node.parent.key1 && key < node.parent.key2){node = node.parent.child2;}
+      }
+     else if(node.parent.keys == 1 && node == node.parent.child2){
+        size++;
+        node.parent.keys = 2;
+        node.parent.key2 = node.key2;
+        node.parent.child2 = new Tree234Node(node.parent, node.key1);
+        node.parent.child2.child1 = node.child1;
+        node.parent.child2.child2 = node.child2;
+        node.child1.parent = node.parent.child2;
+        node.child2.parent = node.parent.child2;
+        node.parent.child3 = new Tree234Node(node.parent, node.key3);
+        node.parent.child3.child1 = node.child3;
+        node.parent.child3.child2 = node.child4;
+        node.child3.parent = node.parent.child3;
+        node.child4.parent = node.parent.child3;
+        if(key > node.parent.key1 && key < node.parent.key2){node = node.parent.child2;}
+        else if(key > node.parent.key2){node = node.parent.child3;}
+      }
+    else if(node.parent.keys ==2 && node == node.parent.child1){
+        size++;
+        node.parent.keys = 3;
+        node.parent.key3 = node.parent.key2;
+        node.parent.key2 = node.parent.key1;
+        node.parent.key1 = node.key2;
+        node.parent.child4 = node.parent.child3;
+        node.parent.child3 = node.parent.child2;
+        node.parent.child1 = new Tree234Node(node.parent, node.key1);
+        node.parent.child1.child1 = node.child1;
+        node.parent.child1.child2 = node.child2;
+        node.child1.parent = node.parent.child1;
+        node.child2.parent = node.parent.child1;
+        node.parent.child2 = new Tree234Node(node.parent, node.key3);
+        node.parent.child2.child1 = node.child3;
+        node.parent.child2.child2 = node.child4;
+        node.child3.parent = node.parent.child2;
+        node.child4.parent = node.parent.child2;
+        if(key < node.parent.key1){node = node.parent.child1;}
+        else if(key > node.parent.key1 && key < node.parent.key2){node = node.parent.child2;}
+      }
+    else if(node.parent.keys == 2 && node == node.parent.child2){
+        size++;
+        node.parent.keys = 3;
+        node.parent.key3 = node.parent.key2;
+        node.parent.key2 = node.key2;
+        node.parent.child4 = node.parent.child3;
+        node.parent.child3 = new Tree234Node(node.parent, node.key3);
+        node.parent.child3.child1 = node.child3;
+        node.parent.child3.child2 = node.child4;
+        node.child3.parent = node.parent.child3;
+        node.child4.parent = node.parent.child3;
+        node.parent.child2 = new Tree234Node(node.parent, node.key1);
+        node.parent.child2.child1 = node.child1;
+        node.parent.child2.child2 = node.child2;
+        node.child1.parent = node.parent.child2;
+        node.child2.parent = node.parent.child2;
+        if(key > node.parent.key1 && key < node.parent.key2){node = node.parent.child2;}
+        else if(key > node.parent.key2 && key < node.parent.key3){node = node.parent.child3;}
+      }
+    else if(node.parent.keys == 2 && node == node.parent.child3){
+        size++;
+        node.parent.keys = 3;
+        node.parent.key3 = node.key2;
+        node.parent.child3 = new Tree234Node(node.parent, node.key1);
+        node.parent.child3.child1 = node.child1;
+        node.parent.child3.child2 = node.child2;
+        node.child1.parent = node.parent.child3;
+        node.child2.parent = node.parent.child3;
+        node.parent.child4 = new Tree234Node(node.parent, node.key3);
+        node.parent.child4.child1 = node.child3;
+        node.parent.child4.child2 = node.child4;
+        node.child3.parent = node.parent.child4;
+        node.child4.parent = node.parent.child4;
+        if(key > node.parent.key2 && key < node.parent.key3){node = node.parent.child3;}
+        else if(key > node.parent.key3){node = node.parent.child4;}
+      }
+      
+      }
+      
+    if(node.keys == 1){
+      if(key < node.key1){
+        node = node.child1;
+        
+      }else {
+        node = node.child2;
+        
+      }
+      }
+      else if(node.keys == 2){
+      if(key < node.key1){
+        node = node.child1;
+        
+      }else if(key > node.key1 && key < node.key2){
+        node = node.child2;
+        
+      }else {
+        node = node.child3;
+        
+      }
+      } 
+
+
+    }
+    
+  if(node.keys == 3){
+    size++;
+    if(node.parent.keys == 1 && node == node.parent.child1){
+        node.parent.keys = 2;
+        node.parent.key2 = node.parent.key1;
+        node.parent.key1 = node.key2;
+        node.parent.child3 = node.parent.child2;
+        node.parent.child1 = new Tree234Node(node.parent,node.key1);
+        node.parent.child1.child1 = node.child1;
+        node.parent.child1.child2 = node.child2;
+        node.parent.child2 = new Tree234Node(node.parent, node.key3);
+        node.parent.child2.child1 = node.child3;
+        node.parent.child2.child2 = node.child4;
+        if(key < node.parent.key1){node = node.parent.child1;}
+        else if(key > node.parent.key1 && key < node.parent.key2){node = node.parent.child2;}
+      }
+     else if(node.parent.keys == 1 && node == node.parent.child2){
+        node.parent.keys = 2;
+        node.parent.key2 = node.key2;
+        node.parent.child2 = new Tree234Node(node.parent, node.key1);
+        node.parent.child2.child1 = node.child1;
+        node.parent.child2.child2 = node.child2;
+        node.parent.child3 = new Tree234Node(node.parent, node.key3);
+        node.parent.child3.child1 = node.child3;
+        node.parent.child3.child2 = node.child4;
+        if(key > node.parent.key1 && key < node.parent.key2){node = node.parent.child2;}
+        else if(key > node.parent.key2){node = node.parent.child3;}
+      }
+    else if(node.parent.keys ==2 && node == node.parent.child1){
+        node.parent.keys = 3;
+        node.parent.key3 = node.parent.key2;
+        node.parent.key2 = node.parent.key1;
+        node.parent.key1 = node.key2;
+        node.parent.child4 = node.parent.child3;
+        node.parent.child3 = node.parent.child2;
+        node.parent.child1 = new Tree234Node(node.parent, node.key1);
+        node.parent.child1.child1 = node.child1;
+        node.parent.child1.child2 = node.child2;
+        node.parent.child2 = new Tree234Node(node.parent, node.key3);
+        node.parent.child2.child1 = node.child3;
+        node.parent.child2.child2 = node.child4;
+        if(key < node.parent.key1){node = node.parent.child1;}
+        else if(key > node.parent.key1 && key < node.parent.key2){node = node.parent.child2;}
+      }
+    else if(node.parent.keys == 2 && node == node.parent.child2){
+        node.parent.keys = 3;
+        node.parent.key3 = node.parent.key2;
+        node.parent.key2 = node.key2;
+        node.parent.child4 = node.parent.child3;
+        node.parent.child3 = new Tree234Node(node.parent, node.key3);
+        node.parent.child3.child1 = node.child3;
+        node.parent.child3.child2 = node.child4;
+        node.parent.child2 = new Tree234Node(node.parent, node.key1);
+        node.parent.child2.child1 = node.child1;
+        node.parent.child2.child2 = node.child2;
+        if(key > node.parent.key1 && key < node.parent.key2){node = node.parent.child2;}
+        else if(key > node.parent.key2 && key < node.parent.key3){node = node.parent.child3;}
+      }
+    else if(node.parent.keys == 2 && node == node.parent.child3){
+        node.parent.keys = 3;
+        node.parent.key3 = node.key2;
+        node.parent.child3 = new Tree234Node(node.parent, node.key1);
+        node.parent.child3.child1 = node.child1;
+        node.parent.child3.child2 = node.child2;
+        node.parent.child4 = new Tree234Node(node.parent, node.key3);
+        node.parent.child4.child1 = node.child3;
+        node.parent.child4.child2 = node.child4;
+        if(key > node.parent.key2 && key < node.parent.key3){node = node.parent.child3;}
+        else if(key > node.parent.key3){node = node.parent.child4;}
+      }
+  } 
+
+    if(node.keys == 1){
+      if(key < node.key1){
+      node.key2 = node.key1;
+      node.key1 = key;
+      }else{
+      node.key2 = key;
+      }
+      node.keys = 2;
+      return;
+    }
+    if(node.keys == 2){
+      if(key < node.key1){
+      node.key3 = node.key2;
+      node.key2 = node.key1;
+      node.key1 = key;
+      }else if(key > node.key1 && key < node.key2){
+      node.key3 = node.key2;
+      node.key2 = key;
+      }else{
+      node.key3 = key;
+      }
+      node.keys = 3;
+    }
+  
+  }
+}
+
+
 
 
   /**
@@ -154,10 +441,11 @@ public class Tree234 extends IntDictionary {
     System.out.println("\nInserting 37.");
     t.insert(37);
     t.testHelper("(7 11)22(37 50)84(95)");
-
+  
     System.out.println("\nInserting 60.");
     t.insert(60);
     t.testHelper("(7 11)22(37 50 60)84(95)");
+    
 
     System.out.println("\nInserting 1.");
     t.insert(1);
@@ -186,7 +474,7 @@ public class Tree234 extends IntDictionary {
     System.out.println("\nInserting 49.");
     t.insert(49);
     t.testHelper("((1)7(11 16)22(23)28(37 49))50((60)84(86 95 100))");
-
+  
     System.out.println("\nInserting 81.");
     t.insert(81);
     t.testHelper("((1)7(11 16)22(23)28(37 49))50((60 81)84(86 95 100))");
@@ -194,7 +482,7 @@ public class Tree234 extends IntDictionary {
     System.out.println("\nInserting 51.");
     t.insert(51);
     t.testHelper("((1)7(11 16)22(23)28(37 49))50((51 60 81)84(86 95 100))");
-
+    
     System.out.println("\nInserting 99.");
     t.insert(99);
     t.testHelper("((1)7(11 16)22(23)28(37 49))50((51 60 81)84(86)95(99 100))");
@@ -203,17 +491,17 @@ public class Tree234 extends IntDictionary {
     t.insert(75);
     t.testHelper("((1)7(11 16)22(23)28(37 49))50((51)60(75 81)84(86)95" +
                  "(99 100))");
-
+    
     System.out.println("\nInserting 66.");
     t.insert(66);
     t.testHelper("((1)7(11 16)22(23)28(37 49))50((51)60(66 75 81))84((86)95" +
                  "(99 100))");
-
+     
     System.out.println("\nInserting 4.");
     t.insert(4);
     t.testHelper("((1 4)7(11 16))22((23)28(37 49))50((51)60(66 75 81))84" +
                  "((86)95(99 100))");
-
+    
     System.out.println("\nInserting 80.");
     t.insert(80);
     t.testHelper("(((1 4)7(11 16))22((23)28(37 49)))50(((51)60(66)75" +
@@ -221,6 +509,8 @@ public class Tree234 extends IntDictionary {
 
     System.out.println("\nFinal tree:");
     t.printTree();
+    System.out.println("The size of final tree is: " + t.size());
+    
   }
 
 }
